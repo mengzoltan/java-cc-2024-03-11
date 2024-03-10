@@ -203,4 +203,28 @@ class GildedRoseTest {
         assertEquals(0, backstagePasses.quality);
         assertEquals(sellIn-2, backstagePasses.sellIn);
     }
+
+    @Test
+    void testQualityAndSellInDropOnConjuredItems() {
+        int quality = 4;
+        int sellIn = 4;
+        Item conjured = new Item(GildedRose.CONJURED, sellIn, quality);
+        Item[] items = new Item[]{conjured};
+
+        GildedRose app = new GildedRose(items);
+        app.updateQuality();
+
+        assertEquals(2, conjured.quality);
+        assertEquals(sellIn-1, conjured.sellIn);
+
+        app.updateQuality();
+
+        assertEquals(0, conjured.quality);
+        assertEquals(sellIn-2, conjured.sellIn);
+
+        app.updateQuality();
+
+        assertEquals(0, conjured.quality);
+        assertEquals(sellIn-3, conjured.sellIn);
+    }
 }

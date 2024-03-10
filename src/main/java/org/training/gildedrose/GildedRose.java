@@ -14,6 +14,7 @@ class GildedRose {
     public static final String BACKSTAGE_PASSES_TO_A_TAFKAL_80_ETC_CONCERT = "Backstage passes to a TAFKAL80ETC concert";
     public static final String SULFURAS_HAND_OF_RAGNAROS = "Sulfuras, Hand of Ragnaros";
     public static final String AGED_BRIE = "Aged Brie";
+    public static final String CONJURED = "Conjured Mana Cake";
 
     public static final int MAXIMUM_QUALITY = 50;
 
@@ -32,7 +33,23 @@ class GildedRose {
             case SULFURAS_HAND_OF_RAGNAROS -> (sulfur) -> log.info("{}'s quality never alters!", sulfur.name);
             case AGED_BRIE -> handleAgedBrie();
             case BACKSTAGE_PASSES_TO_A_TAFKAL_80_ETC_CONCERT -> handleBackstagePasses();
+            case CONJURED -> handleConjured();
             default -> handleNormalItem();
+        };
+    }
+
+    private Consumer<Item> handleConjured() {
+        return (conjured) -> {
+            if (conjured.quality > 0) {
+                decreaseQuality(conjured);
+            }
+            decreaseSellInDays(conjured);
+            if (conjured.sellIn < 0 && conjured.quality > 0) {
+                decreaseQuality(conjured);
+            }
+            if (conjured.quality > 0) {
+                decreaseQuality(conjured);
+            }
         };
     }
 
@@ -56,7 +73,7 @@ class GildedRose {
             }
             decreaseSellInDays(normalItem);
             if (normalItem.sellIn < 0 && normalItem.quality > 0) {
-                normalItem.quality--;
+                decreaseQuality(normalItem);
             }
         };
     }

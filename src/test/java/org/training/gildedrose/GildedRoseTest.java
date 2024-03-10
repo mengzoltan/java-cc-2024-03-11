@@ -144,4 +144,63 @@ class GildedRoseTest {
         assertEquals(sellIn-2, agedBrie.sellIn);
     }
 
+    @Test
+    void Backstage_Passes_Quality_increases_by_2_when_there_are_10_days() {
+        int quality = 10;
+        int sellIn = 10;
+        Item backstagePasses = new Item("Backstage passes to a TAFKAL80ETC concert", sellIn, quality);
+        Item[] items = new Item[]{backstagePasses};
+
+        GildedRose app = new GildedRose(items);
+
+        app.updateQuality();
+
+        assertEquals(quality+2, backstagePasses.quality);
+        assertEquals(sellIn-1, backstagePasses.sellIn);
+
+        app.updateQuality();
+
+        assertEquals(quality+4, backstagePasses.quality);
+        assertEquals(sellIn-2, backstagePasses.sellIn);
+    }
+
+    @Test
+    void Backstage_Passes_Quality_increases_by_3_when_there_are_5_days() {
+        int quality = 10;
+        int sellIn = 5;
+        Item backstagePasses = new Item("Backstage passes to a TAFKAL80ETC concert", sellIn, quality);
+        Item[] items = new Item[]{backstagePasses};
+
+        GildedRose app = new GildedRose(items);
+
+        app.updateQuality();
+
+        assertEquals(quality+3, backstagePasses.quality);
+        assertEquals(sellIn-1, backstagePasses.sellIn);
+
+        app.updateQuality();
+
+        assertEquals(quality+6, backstagePasses.quality);
+        assertEquals(sellIn-2, backstagePasses.sellIn);
+    }
+
+    @Test
+    void Backstage_Passes_Quality_drops_to_0_after_the_concert() {
+        int quality = 10;
+        int sellIn = 0;
+        Item backstagePasses = new Item("Backstage passes to a TAFKAL80ETC concert", sellIn, quality);
+        Item[] items = new Item[]{backstagePasses};
+
+        GildedRose app = new GildedRose(items);
+
+        app.updateQuality();
+
+        assertEquals(0, backstagePasses.quality);
+        assertEquals(sellIn-1, backstagePasses.sellIn);
+
+        app.updateQuality();
+
+        assertEquals(0, backstagePasses.quality);
+        assertEquals(sellIn-2, backstagePasses.sellIn);
+    }
 }

@@ -42,6 +42,10 @@ class GildedRose {
                 backstagePasses.quality++;
                 handleBackstagePasses(backstagePasses);
             }
+            decreaseSellInDays(backstagePasses);
+            if (backstagePasses.sellIn < 0) {
+                backstagePasses.quality = 0;
+            }
         };
     }
 
@@ -74,11 +78,11 @@ class GildedRose {
     }
 
     private void handleBackstagePasses(Item item) {
-        if (item.sellIn < 11 && item.quality < 50) {
+        if (item.sellIn < 11 && item.quality < MAXIMUM_QUALITY) {
             item.quality++;
         }
 
-        if (item.sellIn < 6 && item.quality < 50) {
+        if (item.sellIn < 6 && item.quality < MAXIMUM_QUALITY) {
             item.quality++;
         }
     }

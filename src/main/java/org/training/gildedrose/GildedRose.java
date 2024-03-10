@@ -3,6 +3,12 @@ https://github.com/emilybache/GildedRose-Refactoring-Kata
 */
 package org.training.gildedrose;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Arrays;
+import java.util.function.Consumer;
+
+@Slf4j
 class GildedRose {
 
     public static final String BACKSTAGE_PASSES_TO_A_TAFKAL_80_ETC_CONCERT = "Backstage passes to a TAFKAL80ETC concert";
@@ -18,73 +24,66 @@ class GildedRose {
     }
 
     public void updateQuality() {
-        for (Item item : items) {
-
-            if (item.name.equals(SULFURAS_HAND_OF_RAGNAROS)) {
-                continue;
-            }
-
-            if (isItSpecialItem(item)) {
-                handleSpecialItem(item);
-            } else if (item.quality > 0) {
-                decreaseQuality(item);
-            }
-
-            decreaseSellInDays(item);
-
-            if (item.sellIn < 0) {
-                handleNegativeSellInDay(item);
-            }
-        }
+        Arrays.stream(items).forEach(item -> getItemHandlerByItemName(item).accept(item));
     }
 
-    private void handleNegativeSellInDay(Item item) {
-        if (!item.name.equals(AGED_BRIE)) {
-            if (!item.name.equals(BACKSTAGE_PASSES_TO_A_TAFKAL_80_ETC_CONCERT)) {
-                if (item.quality > 0 && !item.name.equals(SULFURAS_HAND_OF_RAGNAROS)) {
-                    item.quality = item.quality - 1;
-                }
-            } else {
-                item.quality = 0;
+    private Consumer<Item> getItemHandlerByItemName(Item item) {
+        return switch (item.name) {
+            case SULFURAS_HAND_OF_RAGNAROS -> (sulfur) -> log.info("{}'s quality never alters!", sulfur.name);
+            case AGED_BRIE -> handleAgedBrie();
+            case BACKSTAGE_PASSES_TO_A_TAFKAL_80_ETC_CONCERT -> handleBackstagePasses();
+            default -> handleNormalItem();
+        };
+    }
+
+    private Consumer<Item> handleBackstagePasses() {
+        return (backstagePasses) -> {
+            if (backstagePasses.quality < MAXIMUM_QUALITY) {
+                backstagePasses.quality++;
+                handleBackstagePasses(backstagePasses);
             }
-        } else {
-            if (item.quality < 50) {
-                item.quality = item.quality + 1;
+        };
+    }
+
+    private Consumer<Item> handleNormalItem() {
+        return (normalItem) -> {
+            if (normalItem.quality > 0) {
+                decreaseQuality(normalItem);
             }
-        }
+            decreaseSellInDays(normalItem);
+            if (normalItem.sellIn < 0 && normalItem.quality > 0) {
+                normalItem.quality--;
+            }
+        };
+    }
+
+    private Consumer<Item> handleAgedBrie() {
+        return (agedBrie) -> {
+            if (agedBrie.quality < MAXIMUM_QUALITY) {
+                agedBrie.quality++;
+            }
+            decreaseSellInDays(agedBrie);
+            if (agedBrie.sellIn < 0 && agedBrie.quality < MAXIMUM_QUALITY) {
+                agedBrie.quality++;
+            }
+        };
     }
 
     private void decreaseSellInDays(Item item) {
         item.sellIn--;
     }
 
-    private void handleSpecialItem(Item item) {
-        if (item.quality < MAXIMUM_QUALITY) {
-            item.quality = item.quality + 1;
-
-            if (item.name.equals(BACKSTAGE_PASSES_TO_A_TAFKAL_80_ETC_CONCERT)) {
-                handleBackstagePasses(item);
-            }
-        }
-    }
-
     private void handleBackstagePasses(Item item) {
         if (item.sellIn < 11 && item.quality < 50) {
-            item.quality = item.quality + 1;
+            item.quality++;
         }
 
         if (item.sellIn < 6 && item.quality < 50) {
-            item.quality = item.quality + 1;
+            item.quality++;
         }
     }
 
     private void decreaseQuality(Item item) {
-        item.quality = item.quality - 1;
-    }
-
-    private boolean isItSpecialItem(Item item) {
-        return item.name.equals(AGED_BRIE)
-                || item.name.equals(BACKSTAGE_PASSES_TO_A_TAFKAL_80_ETC_CONCERT)
-                || item.name.equals(SULFURAS_HAND_OF_RAGNAROS);
+        item.quality--;
     }
 }

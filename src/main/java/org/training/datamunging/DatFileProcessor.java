@@ -6,27 +6,26 @@ import lombok.SneakyThrows;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
 @Getter
-public class WeatherFileProcessor {
+public class DatFileProcessor <T> {
 
-    private WeatherFileFormat weatherFileFormat;
+    private DatFileFormat<T> datFileFormat;
 
     @SneakyThrows
-    public int getDayWithMinimumDiff(Path filePath) {
+    public T getInstanceWithMinimumDiff(Path filePath) {
         try (Stream<String> lines = Files.lines(filePath)) {
 
-            Optional<Weather> min = lines
-                    .skip(weatherFileFormat.getHeaderLines())
-                    .filter(weatherFileFormat::isProcessableRow)
-                    .map(weatherFileFormat::createWeather)
-                    .min(Comparator.comparing(Weather::getDifference));
+            Optional<T> min = lines
+                    .skip(datFileFormat.getSkippingLines())
+                    .filter(datFileFormat::isProcessableRow)
+                    .map(datFileFormat::createWeather)
+                    .min(datFileFormat::getComperator);
 
-            return min.orElseThrow(IllegalArgumentException::new).day();
+            return min.orElseThrow(IllegalArgumentException::new);
         }
 
     }

@@ -1,4 +1,4 @@
-package org.training.datamunging;
+package org.training.datamunging.weather;
 
 import lombok.Builder;
 

@@ -34,7 +34,12 @@ class ContentRenderer {
     private static String createTags(String element, Map<String, String> attributes) {
         StringBuilder attributeList = new StringBuilder();
         for (Map.Entry<String, String> attribute : attributes.entrySet()) {
-            attributeList.append(" ").append(attribute.getKey()).append("=\"").append(attribute.getValue()).append("\"");
+            attributeList
+                    .append(" ")
+                    .append(attribute.getKey())
+                    .append("=\"")
+                    .append(attribute.getValue())
+                    .append("\"");
         }
         String openingTag = buildTag(element, attributeList.toString(), true);
         return openingTag;

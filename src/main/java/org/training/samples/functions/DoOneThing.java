@@ -3,6 +3,7 @@ package org.training.samples.functions;
 public class DoOneThing {
 
     public void renderContent(RenderInformation renderInformation) {
+
         String element = renderInformation.element;
         if (element.equalsIgnoreCase("script")) {
             throw new RuntimeException("Invalid element.");
@@ -18,9 +19,7 @@ public class DoOneThing {
         String openingTag = partialOpeningTag + ">";
         String closingTag = "</" + element + ">";
         String content = renderInformation.content;
-
         String template = openingTag + content + closingTag;
-
         Element rootElement = renderInformation.root;
         rootElement.setInnerHTML(template);
     }
